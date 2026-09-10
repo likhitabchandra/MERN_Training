@@ -1,9 +1,10 @@
-function TaskCard({title,description,status}){
+function TaskCard(props){
     return(
         <div className="task-card">
-            <h3>{title} </h3>
-            <p>{description} </p>
-            <p>{status}</p>
+            <h3>{props.title} </h3>
+            <p>{props.description} </p>
+            <p>{props.status}</p>
+            <button onClick={props.onToggle}>change status</button>
         </div>
     );
 

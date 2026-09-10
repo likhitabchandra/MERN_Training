@@ -33,6 +33,17 @@ nav h2 {
 main{
     padding: 0px 30px 30px;
 }
+
+.add-task-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.add-task-form input {
+    text-align: left;
+}
 /*sat-container*/
 .stack-container{
     display: flex;
@@ -63,6 +74,7 @@ main{
 
     display: flex;
     justify-content: space-between;
+    justify:center;
     align-items: center;
 }
 
