@@ -1,14 +1,22 @@
 import "./App.css"
 import Dashboard from "./components/Dashboard";
 import Navbar from "./components/Navbar";
-import Welcome from "./components/welcome";
+import { Routes, Route} from "react-router-dom";
+import Tasks from "./components/Tasks";
+import TaskDetails from "./components/TaskDetails";
 
 function App(){
   return(
     <div>
       <Navbar />
-      <Welcome />
-      <Dashboard />
+    <Routes>
+    <Route path="/" element={<Dashboard/>}/>
+    <Route path="/tasks" element={<Tasks/>}/>
+    <Route path="/tasks/:id" element={<TaskDetails/>}/>
+
+
+  </Routes>
+
     </div>
   );
 }

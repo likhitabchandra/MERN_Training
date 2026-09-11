@@ -5,6 +5,7 @@ function TaskCard(props){
             <p>{props.description} </p>
             <p>{props.status}</p>
             <button onClick={props.onToggle}>change status</button>
+            <button onClick={props.onDelete}>Delete task</button>
         </div>
     );
 
