@@ -1,18 +1,8 @@
 import StatCard from "./StatCard";
 import TaskCard from "./TaskCard";
-import { useState } from "react";   
 import AddTask from "./AddTask";
 
-function Dashboard(){
-    const [tasks, setTasks]=useState([{id:1,title:"learn react", 
-        description:"understanding components" ,
-        status:"pending"},
-        {id:2,title:"learn SQL",
-             description:"understanding queries",
-              status:"completed"},
-        {id:3,title:"learn DSA",
-             description:"understanding ",
-             status:"completed"}]);
+function Dashboard({ tasks, setTasks }){
              function toggleTask(id){
                 setTasks((currentTasks) =>
                     currentTasks.map((task) =>

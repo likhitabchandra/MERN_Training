@@ -12,7 +12,7 @@ function TaskDetails(props){
             <h1>Task details</h1>
             <h2>{task.title}</h2>
             <p>{task.description} </p>
-            <p>status:{task.status}</p>
+            <p>status:{task.status}   </p>
         </div>
     );
 }
