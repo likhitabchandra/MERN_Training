@@ -4,16 +4,27 @@ import Navbar from "./components/Navbar";
 import { Routes, Route} from "react-router-dom";
 import Tasks from "./components/Tasks";
 import TaskDetails from "./components/TaskDetails";
-import { useState } from "react";
-
-const initialTasks = [
-  { id: 1, title: "learn react", description: "understanding components", status: "pending" },
-  { id: 2, title: "learn SQL", description: "understanding queries", status: "completed" },
-  { id: 3, title: "learn DSA", description: "understanding", status: "completed" },
-];
+import { useState , useEffect} from "react";
 
 function App(){
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState([]);
+  useEffect(()=>{
+    async function loadTasks() {
+      try {
+        const response = await fetch("http://localhost:3000/api/tasks");
+        if (!response.ok) {
+          throw new Error("Unable to load tasks");
+        }
+        const taskData = await response.json();
+        console.log("Tasks from API:", taskData);
+        setTasks(taskData);
+      } catch (error) {
+        console.error("Failed to load tasks:", error);
+      }
+    }
+
+    loadTasks();
+},[]);
 
   return(
     <div>
