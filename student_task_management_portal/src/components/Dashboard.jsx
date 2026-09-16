@@ -1,68 +1,45 @@
-import StatCard from "./StatCard";
 import TaskCard from "./TaskCard";
+import StatCard from "./StatCard";
 import AddTask from "./AddTask";
 
-function Dashboard({ tasks, setTasks }){
-    function toggleTask(id) {
-        setTasks((currentTasks) =>
-            currentTasks.map((task) =>
-                task.id === id
-                    ? {
-                          ...task,
-                          status: task.status === "pending" ? "completed" : "pending",
-                      }
-                    : task
-            )
-        );
-    }
+function Dashboard({ tasks, isLoading, onAddTask, onToggleTask, onDeleteTask }) {
 
-    function addTask({ title, description }) {
-        setTasks((currentTasks) => [
-            ...currentTasks,
-            {
-                id: Date.now(),
-                title,
-                description,
-                status: "pending",
-            },
-        ]);
-    }
-
-    function deleteTask(id) {
-        setTasks((currentTasks) => currentTasks.filter((task) => task.id !== id));
-    }
-
-    const total = tasks.length;
-    const completed = tasks.filter((t) => t.status === "completed").length;
-    const pending = tasks.filter((t) => t.status === "pending").length;
+    const totalTasks = tasks.length;
+    const remainingTasks = tasks.filter((task) => task.status === "pending").length;
+    const completedTasks = tasks.filter((task) => task.status === "completed").length;
 
     return (
-        <main>
+        <main className="dashboard-page">
             <div className="stack-container">
-                <StatCard title={"total tasks"} value={total} />
-                <StatCard title={"completed"} value={completed} />
-                <StatCard title={"pending"} value={pending} />
+                <StatCard title={"Total Tasks"} value={totalTasks} />
+                <StatCard title={"Remaining Tasks"} value={remainingTasks} />
+                <StatCard title={"Completed Tasks"} value={completedTasks} />
             </div>
 
-            <AddTask onAddTask={addTask} />
+            <AddTask onAddTask={onAddTask} />
 
-            <h2>Recent Tasks</h2>
-            <div className="task-container">
-                {tasks.length === 0 ? (
-                    <p>No tasks yet. Add a task to get started.</p>
-                ) : (
-                    tasks.map((task) => (
-                        <TaskCard
-                            key={task.id}
-                            title={task.title}
-                            description={task.description}
-                            status={task.status}
-                            onToggle={() => toggleTask(task.id)}
-                            onDelete={() => deleteTask(task.id)}
-                        />
-                    ))
-                )}
-            </div>
+            <section className="task-section">
+                <h2>Recent Tasks</h2>
+                <div className="task-container">
+                    {isLoading ? (
+                        <p className="empty-state">Loading tasks…</p>
+                    ) : tasks.length === 0 ? (
+                        <div className="empty-state">No tasks yet. Add one to get started.</div>
+                    ) : (
+                        tasks.map((task) => (
+                            <TaskCard
+                                key={task.id}
+                                id={task.id}
+                                title={task.title}
+                                description={task.description}
+                                status={task.status}
+                                onToggle={() => onToggleTask(task)}
+                                onDelete={() => onDeleteTask(task.id)}
+                            />
+                        ))
+                    )}
+                </div>
+            </section>
         </main>
     );
 }

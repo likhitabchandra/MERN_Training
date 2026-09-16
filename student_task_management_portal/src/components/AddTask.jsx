@@ -10,22 +10,15 @@ function AddTask({ onAddTask }){
 
         if (!title.trim()) return;
 
-        onAddTask({
-            title: title.trim(),
-            description: description.trim(),
-        });
-        setTitle("");
-        setDescription("");
-        const response = await fetch("http://localhost:3000/api/tasks", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                title: title.trim(),
-                description: description.trim()
-            })
-        });
+        try {
+            const wasAdded = await onAddTask({ title: title.trim(), description: description.trim() });
+            if (wasAdded) {
+                setTitle("");
+                setDescription("");
+            }
+        } catch (error) {
+            console.error("Failed to add task:", error);
+        }
     }
 
     return(

@@ -22,6 +22,15 @@ body {
   font-family: "DM Sans", sans-serif;
 }
 
+.app-error {
+  max-width: 1120px;
+  margin: 20px auto 0;
+  padding: 12px clamp(24px, 6vw, 72px);
+  color: #8a2e29;
+  background: #fbe8e5;
+  border: 1px solid rgba(182, 68, 61, 0.35);
+}
+
 nav {
   display: flex;
   align-items: center;
@@ -117,13 +126,26 @@ button {
 }
 
 button:hover { background: #294b41; box-shadow: 0 6px 14px rgba(41, 75, 65, 0.2); transform: translateY(-2px); }
+.details-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 10px 14px;
+  color: var(--celadon-dark);
+  border: 1px solid var(--celadon-dark);
+  border-radius: 7px;
+  font: 600 0.88rem "DM Sans", sans-serif;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.details-link:hover { color: #fff; background: var(--celadon-dark); transform: translateY(-2px); }
 main > h2 { margin: 0 0 18px; color: var(--ink); font-family: "Playfair Display", serif; font-size: 1.7rem; }
 
 .task-container { display: flex; flex-direction: column; gap: 14px; }
 
 .task-card {
   display: grid;
-  grid-template-columns: minmax(150px, 1.1fr) minmax(180px, 1.7fr) 110px auto auto;
+  grid-template-columns: minmax(150px, 1.1fr) minmax(180px, 1.7fr) 110px auto auto auto;
   gap: 16px;
   align-items: center;
   padding: 18px 20px;
@@ -152,6 +174,21 @@ main > h2 { margin: 0 0 18px; color: var(--ink); font-family: "Playfair Display"
 
 .task-card button:last-child { color: var(--dancheong-red); background: transparent; border: 1px solid rgba(182, 68, 61, 0.45); }
 .task-card button:last-child:hover { color: #fff; background: var(--dancheong-red); box-shadow: 0 6px 14px rgba(182, 68, 61, 0.2); }
+
+.task-details-page { padding-top: 56px; }
+.task-details-card {
+  max-width: 700px;
+  padding: clamp(26px, 5vw, 48px);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--celadon);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.task-details-card h1 { margin: 0 0 26px; color: var(--muted-ink); font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.task-details-card h2 { margin: 0 0 14px; font-family: "Playfair Display", serif; font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.1; }
+.task-description { margin: 0 0 24px; color: var(--muted-ink); font-size: 1.05rem; line-height: 1.65; }
+.task-status { display: inline-block; margin: 0 0 30px; padding: 6px 12px; color: var(--celadon-dark); background: #e5f0e9; border-radius: 999px; font-size: 0.8rem; font-weight: 700; text-transform: capitalize; }
 
 @media (max-width: 760px) {
   .welcome { padding-top: 44px; }
