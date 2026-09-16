@@ -4,7 +4,8 @@ function AddTask({ onAddTask }){
     const[title,setTitle]=useState("");
     const[description,setDescription]=useState("");
 
-    function handleSubmit(event) {
+    
+    async function handleSubmit(event) {
         event.preventDefault();
 
         if (!title.trim()) return;
@@ -15,6 +16,16 @@ function AddTask({ onAddTask }){
         });
         setTitle("");
         setDescription("");
+        const response = await fetch("http://localhost:3000/api/tasks", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                title: title.trim(),
+                description: description.trim()
+            })
+        });
     }
 
     return(
