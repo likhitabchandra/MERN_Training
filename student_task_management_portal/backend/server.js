@@ -1,8 +1,15 @@
-const express = require("express")
-const cors=require("cors")
+require("dotenv").config();
+
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+
 const app=express();
+const port = process.env.PORT || 3000;
+
 app.use(cors());
 app.use(express.json());
+
 const tasks = [
   { id: 1, title: "learn react", description: "understanding components", status: "pending" },
   { id: 2, title: "learn SQL", description: "understanding queries", status: "completed" },
@@ -71,6 +78,23 @@ app.delete("/api/tasks/:id", (req, res) => {
 app.get("/",(req,res)=>{
     res.send("backend is working!!")
 });
-app.listen(3000,()=>{
-    console.log("server is running on port 3000");
-});
+async function startServer() {
+  if (!process.env.MONGO_URI) {
+    console.error("MONGO_URI is missing. Add it to backend/.env before starting the server.");
+    process.exitCode = 1;
+    return;
+  }
+
+  try {
+    await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 5000 });
+    console.log("Connected to MongoDB");
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  } catch (error) {
+    console.error("MongoDB connection error:", error.message);
+    process.exitCode = 1;
+  }
+}
+
+startServer();
