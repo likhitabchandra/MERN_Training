@@ -1,98 +1,125 @@
 require("dotenv").config();
 
+// bring express in node.js
 const express = require("express");
+
+// installing cors middleware
 const cors = require("cors");
+
+// create an express app
+const app = express();
+
+// import the Task model
+const Task = require("./models/Task");
+
+app.get("/", (req, res) => {
+    res.send("Back-end server is running");
+});
+
+//mongoose connection
 const mongoose = require("mongoose");
 
-const app=express();
-const port = process.env.PORT || 3000;
+app.use(cors()); // use cors middleware to handle requests from different origins
+  
+app.use(express.json());// use express.json() middleware to parse incoming JSON requests
 
-app.use(cors());
-app.use(express.json());
+const mongoUri = process.env.MONGO_URI || process.env.MONGO_URL;
 
-const tasks = [
-  { id: 1, title: "learn react", description: "understanding components", status: "pending" },
-  { id: 2, title: "learn SQL", description: "understanding queries", status: "completed" },
-  { id: 3, title: "learn DSA", description: "understanding", status: "completed" },
-];
+if (!mongoUri) {
+    throw new Error("MONGO_URI is missing from backend/.env");
+}
 
-app.get("/api/tasks", (req, res) => {
-  console.log("/api/tasks requested - returning tasks:\n", tasks);
-  res.json(tasks);
-});
-app.get("/api/tasks/:id", (req, res) => {
-  const taskId = Number(req.params.id);
-  const task = tasks.find((t) => t.id === taskId);
-  if (!task) {
-    console.warn("/api/tasks/:id requested - task not found:", taskId);
-    return res.status(404).json({ error: "Task not found!" });
-  }
-  console.log("/api/tasks/:id requested - returning task:\n", task);
-  res.json(task);
-})
+function isValidTaskId(id) {
+    return mongoose.Types.ObjectId.isValid(id);
+}
 
-app.put("/api/tasks/:id",(req,res)=>{
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id)) {
-    return res.status(400).json({ message: "Task id must be a number" });
-  }
-  const task=tasks.find((task)=>task.id===id);
-  if(!task){
-        return res.status(404).json({ message:"Task not found!" });
-  }
-  if (!["pending", "completed"].includes(req.body.status)) {
-    return res.status(400).json({ message: "Status must be pending or completed" });
-  }
-  task.status = req.body.status;
-  res.json(task);
-})
-
-app.post("/api/tasks", (req, res) => {
-  const { title, description = "" } = req.body ?? {};
-  if (typeof title !== "string" || !title.trim()) {
-    return res.status(400).json({ error: "A task title is required" });
-  }
-  const newtask = {
-    id: Date.now(),
-    title: title.trim(),
-    description: typeof description === "string" ? description.trim() : "",
-    status: "pending",
-  };
-  tasks.push(newtask);
-  console.log("/api/tasks POST - added task. Current tasks:\n", tasks);
-  res.status(201).json(newtask);
+//read tasks in backend
+ app.get("/api/tasks", async (req, res) => {
+    try {
+        const tasks = await Task.find();
+        res.json(tasks);
+    } catch (error) {
+        console.error("Error reading tasks:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 });
 
-app.delete("/api/tasks/:id", (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id)) {
-    return res.status(400).json({ message: "Task id must be a number" });
-  }
-  const taskIndex = tasks.findIndex((task) => task.id === id);
-  if (taskIndex === -1) {
-    return res.status(404).json({ message: "Task not found!" });
-  }
-  tasks.splice(taskIndex, 1);
-  res.status(204).end();
+app.get("/api/tasks/:id", async (req, res) => {
+    try {
+    if (!isValidTaskId(req.params.id)) {
+      return res.status(400).json({ error: "Invalid task id" });
+    }
+
+        const task = await Task.findById(req.params.id);
+        if (!task) {
+            return res.status(404).json({ error: "Task not found" });
+        }
+        res.json(task);
+    } catch (error) {
+        console.error("Error reading task:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 });
-app.get("/",(req,res)=>{
-    res.send("backend is working!!")
+
+// create operation in backend
+app.post("/api/tasks", async (req, res) => {
+    try{
+      const newTask = await Task.create(req.body);
+  res.status(201).json(newTask);
+    }catch (error) {
+        console.error("Error reading task:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+  })
+// update operation in backend
+app.put("/api/tasks/:id",async (req, res) => {
+    try{
+      if (!isValidTaskId(req.params.id)) {
+        return res.status(400).json({message:"Invalid task id"});
+      }
+
+  const task = await Task.findByIdAndUpdate(
+        req.params.id,
+        {status:req.body.status},
+        {new:true}
+      );
+      if(!task){
+        return res.status(404).json({message:"task not found"})
+      }
+      res.json(task);
+    }catch(error){
+      console.error("Error updating task:", error);
+      res.status(500).json({message:"failed to fetch the task"})
+      
+    }
+});
+
+// delete operation in backend
+app.delete("/api/tasks/:id",async (req, res) => {
+    try{
+      if (!isValidTaskId(req.params.id)) {
+        return res.status(400).json({message:"Invalid task id"});
+      }
+
+      const deletedTask =await Task.findByIdAndDelete(req.params.id)
+      if(!deletedTask){
+        return res.status(404).json({message:"message not found"})
+      }
+      res.json(deletedTask);
+    }catch(error){
+      console.error("Error deleting task:", error);
+      res.status(500).json({message:"failed to fetch the task"})
+    }
 });
 async function startServer() {
-  if (!process.env.MONGO_URI) {
-    console.error("MONGO_URI is missing. Add it to backend/.env before starting the server.");
-    process.exitCode = 1;
-    return;
-  }
-
   try {
-    await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 5000 });
+    await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 5000 });
     console.log("Connected to MongoDB");
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+    app.listen(3000, () => {
+      console.log("Server is running on port 3000");
     });
   } catch (error) {
-    console.error("MongoDB connection error:", error.message);
+    console.error("MongoDB connection failed:", error.message);
     process.exitCode = 1;
   }
 }

@@ -44,7 +44,7 @@ nav {
 nav h2 { margin: 0; color: var(--celadon); font-family: "Playfair Display", serif; font-size: 1.25rem; letter-spacing: 0.02em; }
 .nav-links { display: flex; gap: 24px; color: #d8e6df; font-size: 0.9rem; }
 .nav-links span { cursor: pointer; transition: color 0.2s ease; }
-.nav-links span:hover { color: #fff; }
+.nav-links span:hover{ color: #fff; }
 
 .welcome {
   max-width: 1120px;
