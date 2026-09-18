@@ -1,11 +1,18 @@
 import {Link} from "react-router-dom";
 function Navbar(){
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        console.log("Logged out Successfully");
+    };
     return (
         <nav>
             <h2>Student Task Portal</h2>
             <div className="nav-links">
-                <Link to="/">Dashboard</Link>
-                <Link to="/tasks">Tasks</Link>
+                <Link to={"/"}>Dashboard</Link>
+                <Link to={"/tasks"}>Tasks</Link>
+                <button onClick={handleLogout}>
+                    Logout
+                </button>
             </div>
         </nav>
     );

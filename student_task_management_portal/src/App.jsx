@@ -1,11 +1,12 @@
 import "./App.css"
 import Dashboard from "./components/Dashboard";
 import Navbar from "./components/Navbar";
-import { Routes, Route} from "react-router-dom";
+import { Routes, Route, data} from "react-router-dom";
 import Tasks from "./components/Tasks";
 import TaskDetails from "./components/TaskDetails";
 import { useState , useEffect} from "react";
-
+import Login from "./components/Login";
+import Register from "./components/Register";
 function App(){
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -72,9 +73,12 @@ function App(){
   async function deleteTask(id) {
     try {
       setError("");
-      const response = await fetch(`http://localhost:3000/api/tasks/${id}`, { method: "DELETE" });
-      if (!response.ok) throw new Error("Unable to delete task");
-      setTasks((currentTasks) => currentTasks.filter((task) => task.id !== id));
+      const response = await fetch(`http://localhost:3000/api/tasks/${task._id}`, { method: "DELETE" })
+      .then((res) => res.json())
+      .then(data => {
+        if (!data.ok) throw new Error("Unable to delete task");
+        setTasks((currentTasks) => currentTasks.filter((task) => task.id !== id));
+      });
     } catch (requestError) {
       console.error("Failed to delete task:", requestError);
       setError("Unable to delete the task. Please try again.");
@@ -89,6 +93,8 @@ function App(){
     <Route path="/" element={<Dashboard tasks={tasks} isLoading={isLoading} onAddTask={addTask} onToggleTask={toggleTask} onDeleteTask={deleteTask}/>}/>
     <Route path="/tasks" element={<Tasks tasks={tasks} isLoading={isLoading} onToggleTask={toggleTask} onDeleteTask={deleteTask}/>}/>
     <Route path="/tasks/:id" element={<TaskDetails tasks={tasks} isLoading={isLoading}/>}/>
+    <Route path="/login" element={<Login/>}/>
+    <Route path="/register" element={<Register/>}/>
   </Routes>
 
     </div>
